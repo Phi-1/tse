@@ -1,0 +1,21 @@
+{
+  "name": "tse",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "main.js",
+  "bin": {
+    "tse": "bin/tse"
+  },
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "commander": "^12.1.0"
+  }
+}
