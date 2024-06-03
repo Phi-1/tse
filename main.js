@@ -10,7 +10,11 @@ main()
 
 function main() {
     const config = createConfig(process.argv)
-    processDirectory(config.rootDir, config.recursive, config.log)
+
+    if (config.watch) 
+        watchDirectory(config.rootDir, config.log)
+    else
+        processDirectory(config.rootDir, config.recursive, config.log)
 }
 
 function createConfig(argv) {
@@ -50,18 +54,47 @@ function parseArgs(argv) {
     }
 }
 
+function watchDirectory(path, log) {
+    const watcher = chokidar.watch(path, {
+        persistent: true
+    })
+
+    // FIXME: change event triggers on process
+    watcher
+        .on("add",    (path) => onFileEvent(path, log))
+        .on("change", (path) => onFileEvent(path, log))
+}
+
+function onFileEvent(path, log) {
+    const isJavascript = new RegExp(/[\w\-]+\.js$/)
+    if (!isJavascript.test(path))
+        return
+
+    const filename = path.slice(path.match(isJavascript).index)
+    processFile(path, filename, log)
+}
+
 async function processDirectory(path, recursive, log) {
     const dir = await fspromises.opendir(path)
     const isJavascript = new RegExp(/\.js$/)
 
     for await (const entry of dir) {
         if (entry.isFile() && isJavascript.test(entry.name)) {
-            readFile(path + "/" + entry.name)
-                .then((content) => processFileContent(content, entry.name, log))
+            processFile(path + "/" + entry.name, entry.name, log)
         }
         else if (entry.isDirectory() && recursive) {
             processDirectory(path + "/" + entry.name, recursive, log)
         }
+    }
+}
+
+async function processFile(path, filename, log) {
+    try {
+        const content = await readFile(path)
+        const processed = processFileContent(content, filename, log)
+        fspromises.writeFile(path, processed, { encoding: "utf-8" })
+    } catch(error) {
+        console.error("Error processing file: " + path)
     }
 }
 
@@ -70,11 +103,15 @@ function processFileContent(content, filename, log) {
         console.log(`Processing ${filename}`)
 
     const isImportStatement = new RegExp(/^import/)
+    const hasFileExtension = new RegExp(/\.js/)
     const lines = content.split("\n")
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i]
+
         if (!isImportStatement.test(line))
+            continue
+        if (hasFileExtension.test(line))
             continue
 
         const lastQuoteIndex = line.match(/[\"\'];*$/).index
