@@ -6,6 +6,7 @@ import { processDirectory } from "./src/files.js"
 
 main()
 
+// FIXME: sometimes watcher doesn't trigger, prolly an ignore queue problem, needs testing
 function main() {
     const config = createConfig(process.argv)
 

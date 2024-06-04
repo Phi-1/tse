@@ -33,12 +33,15 @@ function processFileContent(content, filename, log) {
 
     const isImportStatement = new RegExp(/^import/)
     const hasFileExtension = new RegExp(/\.js/)
+    const isRelativeImport = new RegExp(/[\"\']\.{1,2}\//)
     const lines = content.split("\n")
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i]
 
         if (!isImportStatement.test(line))
+            continue
+        if (!isRelativeImport.test(line))
             continue
         if (hasFileExtension.test(line))
             continue
