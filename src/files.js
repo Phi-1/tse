@@ -19,7 +19,7 @@ async function processFile(path, filename, log, fileIgnoreQueue) {
     try {
         const content = await readFile(path)
         const processed = processFileContent(content, filename, log)
-        fspromises.writeFile(path, processed, { encoding: "utf-8" })
+        await fspromises.writeFile(path, processed, { encoding: "utf-8" })
         if (fileIgnoreQueue)
             fileIgnoreQueue.addFile(path)
     } catch(error) {

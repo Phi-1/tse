@@ -1,0 +1,1 @@
+Adds .js extensions to relative import statements in javascript files
