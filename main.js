@@ -6,6 +6,7 @@ import { processDirectory } from "./src/files.js"
 
 main()
 
+// TODO: add new cli option for slow, to enable waitForWrite and ignore queue, disable by default
 function main() {
     const config = createConfig(process.argv)
 

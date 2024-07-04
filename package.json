@@ -1,5 +1,5 @@
 {
-  "name": "tse",
+  "name": "@stormwatch/tse",
   "version": "1.0.0",
   "type": "module",
   "main": "main.js",
@@ -11,7 +11,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "stormwatch",
   "license": "MIT",
   "description": "",
   "dependencies": {
